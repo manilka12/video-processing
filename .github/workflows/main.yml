@@ -2,8 +2,6 @@ name: H.265 Video Encoder
 
 on:
   workflow_dispatch:
-  #schedule:
-    #- cron: '0 */6 * * *'  # Run every 6 hours
 
 jobs:
   encode:
@@ -18,9 +16,11 @@ jobs:
         run: |
           mkdir -p encoded_videos
           
-      - name: Save script from secret
+      - name: Save script from secret (safer method)
         run: |
-          echo "${{ secrets.ENCODER_SCRIPT }}" > encoder.sh
+          cat > encoder.sh << 'SCRIPT_EOF'
+          ${{ secrets.ENCODER_SCRIPT }}
+          SCRIPT_EOF
           chmod +x encoder.sh
         
       - name: Run encoder script with sudo
