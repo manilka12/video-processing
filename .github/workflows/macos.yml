@@ -1,0 +1,34 @@
+name: H.265 Video Encoder (macOS)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  encode:
+    runs-on: macos-latest
+    timeout-minutes: 360  # 6 hour timeout
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        
+      - name: Set up workspace
+        run: |
+          mkdir -p encoded_videos
+          
+      - name: Save macOS script from secret
+        run: |
+          cat > macos_encoder.sh << 'SCRIPT_EOF'
+          ${{ secrets.MACOS_ENCODER_SCRIPT }}
+          SCRIPT_EOF
+          chmod +x macos_encoder.sh
+        
+      - name: Run encoder script on macOS
+        run: |
+          bash macos_encoder.sh
+        
+      - name: Clean up workspace
+        if: always()
+        run: |
+          rm -f macos_encoder.sh
+          rm -rf encoded_videos/
