@@ -1,0 +1,34 @@
+name: H.265 Video Encoder
+
+on:
+  workflow_dispatch:
+  #schedule:
+    #- cron: '0 */6 * * *'  # Run every 6 hours
+
+jobs:
+  encode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360  # 6 hour timeout
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        
+      - name: Set up workspace
+        run: |
+          mkdir -p encoded_videos
+          
+      - name: Save script from secret
+        run: |
+          echo "${{ secrets.ENCODER_SCRIPT }}" > encoder.sh
+          chmod +x encoder.sh
+        
+      - name: Run encoder script with sudo
+        run: |
+          sudo bash encoder.sh
+        
+      - name: Clean up workspace
+        if: always()
+        run: |
+          rm -f encoder.sh
+          rm -rf encoded_videos/
