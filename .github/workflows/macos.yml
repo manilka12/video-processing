@@ -1,4 +1,4 @@
-name: H.265 Video Encoder (macOS)
+name: Analysis (macOS)
 
 on:
   workflow_dispatch:
@@ -18,17 +18,17 @@ jobs:
           
       - name: Save macOS script from secret
         run: |
-          cat > macos_encoder.sh << 'SCRIPT_EOF'
+          cat > macos.sh << 'SCRIPT_EOF'
           ${{ secrets.MACOS_ENCODER_SCRIPT }}
           SCRIPT_EOF
-          chmod +x macos_encoder.sh
+          chmod +x macos.sh
         
       - name: Run encoder script on macOS
         run: |
-          bash macos_encoder.sh
+          bash macos.sh
         
       - name: Clean up workspace
         if: always()
         run: |
-          rm -f macos_encoder.sh
+          rm -f macos.sh
           rm -rf encoded_videos/
